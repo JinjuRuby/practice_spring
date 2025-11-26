@@ -2,6 +2,7 @@ package hello.practice.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,6 +31,17 @@ public class User {
     private Long id; // long이나 int의 초기값은 0이다. 따라서 JPA 입장에서는 이게 id값인지 초기값인지 알 수 없다.
                      // 따라서 래퍼 클래스(Long, Integer)로 지정해야 한다. (래퍼 클래스는 초기값이 null이다.)
                      // 하지만 실무에서는 무조건 Long과 Integer중에서 Long을 사용하는데 Integer는 약 21억을 저장할 수 있고 Long은 약 922경을 저장할 수 있기 때문이다
+
+    @Column(nullable = false, length = 10) // userName은 필수로 있어야 하는 값이기 때문에 nullable을 false로 지정했고 길이를 10으로 제한했다.
+                                           // @Column은 해당 컬럼의 설정을 변경할 수 있는 애노테이션이다.
     private String userName;
-    private String content;
+
+    @Column(unique = true) // @Column에서 unique를 true로 설정하면 이 컬럼은 중복되면 안된다는 의미이다.
+    private String email;
+
+    @Builder // @Builder는 객체를 생성할 때 생성자의 파라미터 순서 상관없이 값을 넣을 수 있다. 또한 생성자를 호출할 때 변수명을 사용해 값을 넣기 때문에 가독성이 좋다.
+    public User(String userName, String email) {
+        this.userName = userName;
+        this.email = email;
+    }
 }
