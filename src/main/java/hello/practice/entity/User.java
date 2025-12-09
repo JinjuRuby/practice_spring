@@ -6,9 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter // JPA는 setter가 없어도 강제로 값을 넣는 기능이 존재한다.
         // 즉 개발자가 따로 값을 set할 일이 없으면 넣으면 안된다. (치명적인 오류가 날 수 있기 때문에)
@@ -43,16 +40,22 @@ public class User {
     @Column(unique = true) // @Column에서 unique를 true로 설정하면 이 컬럼은 중복되면 안된다는 의미이다.
     private String email;
 
+    /* 이 코드는 추천하지 않는다: 작성한 글들이 무수히 많다면 서버에 무리가 간다.
     // User가 자신이 쓴 글들의 목록을 불러올 때 사용하는 컬랙션
     @OneToMany(mappedBy = "user") // 컬랙션이 저장하는 객체에서 user라는 변수를 찾아 연결해준다. 즉, 연결 고리의 반대편 변수 이름을 찾는 기능을 한다.
     // Q: 연결 고리의 반대편 변수명을 찾는 이유가 무엇인가?
     // A: DB 테이블만 보면 User 테이블은 Board 테이블에 접근할 방법이 없지만 Java 서로가 서로를 참조할 수 있다. 따라서 JPA는 테이블을 보고 외래키가 없으면 자동으로 중간 테이블(User_Board)을 만들어 연결된 컬럼(user, board)을 저장한다.
     //    이렇게 되면 컬럼을 추가해야할 상황이 온다면 이 중간 테이블은 JPA가 자동으로 관리하는 숨겨진 테이블이라 Java 엔티티가 존재하지 않는다. 따라서 작성 날짜, 조회수 같은 추가 정보를 넣어야 하는 비즈니스 요구사항이 생겨도 확장이 불가능하다
     private List<Board> boards = new ArrayList<>();
+    */
+
+    @Column(nullable = false)
+    private String password;
 
     @Builder // @Builder는 객체를 생성할 때 생성자의 파라미터 순서 상관없이 값을 넣을 수 있다. 또한 생성자를 호출할 때 변수명을 사용해 값을 넣기 때문에 가독성이 좋다.
-    public User(String userName, String email) {
+    public User(String userName, String email, String password) {
         this.userName = userName;
         this.email = email;
+        this.password = password;
     }
 }
