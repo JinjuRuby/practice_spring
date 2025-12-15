@@ -13,7 +13,8 @@ public class Board {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long boardNumber;
+    @Column(name = "board_id")
+    private Long id;
 
     @Column(nullable = false)
     private String title;
@@ -57,6 +58,11 @@ public class Board {
     public Board(String title, User user, String content) {
         this.title = title;
         this.user = user;
+        this.content = content;
+    }
+
+    public void update(String title, String content) {
+        this.title = title;
         this.content = content;
     }
 }
