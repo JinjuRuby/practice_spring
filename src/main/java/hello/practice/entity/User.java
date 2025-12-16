@@ -35,7 +35,7 @@ public class User {
     @Column(nullable = false, length = 10) // @Column은 해당 컬럼의 설정을 변경할 수 있는 애노테이션이다.
                                            // userName은 필수로 있어야 하는 값이기 때문에 nullable을 false로 지정했고 길이를 10으로 제한했다.
 
-    private String userName;
+    private String username;
 
     @Column(unique = true) // @Column에서 unique를 true로 설정하면 이 컬럼은 중복되면 안된다는 의미이다.
     private String email;
@@ -55,8 +55,8 @@ public class User {
     private String password;
 
     @Builder // @Builder는 객체를 생성할 때 생성자의 파라미터 순서 상관없이 값을 넣을 수 있다. 또한 생성자를 호출할 때 변수명을 사용해 값을 넣기 때문에 가독성이 좋다.
-    public User(String userName, String email, String password) {
-        this.userName = userName;
+    public User(String username, String email, String password) {
+        this.username = username;
         this.email = email;
         this.password = password;
     }
