@@ -1,5 +1,8 @@
 package hello.practice.dto;
 
+import hello.practice.entity.Board;
+import hello.practice.entity.User;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 // 사용자가 글을 작성하고 저장할 때 사용하는 DTO
@@ -18,8 +21,20 @@ import lombok.*;
 @Builder // 클래스에 붙이면, 모든 필드(title, content)를 재료로 쓰는 빌더를 만들어준다.
 public class BoardRequestDto {
 
+    @NotBlank(message = "제목을 작성해주세요")
     private String title;
+    @NotBlank(message = "글을 작성해주세요")
     private String content;
+
+    public Board toEntity(User user) {
+
+        return Board.builder()
+                .title(this.title)
+                .content(this.content)
+                .user(user)
+                .build();
+
+    }
 
     // -----------------------------------------------------------
     // [학습 메모 1: 생성자를 2개나 만드는 이유]
