@@ -11,6 +11,7 @@ import lombok.Getter;
 @Builder
 public class UserResponseDto {
 
+    private Long id;
     private String username;
     private String email;
 
@@ -18,6 +19,7 @@ public class UserResponseDto {
 
         return UserResponseDto.builder()
                 .username(user.getUsername())
+                .id(user.getId())
                 .email(user.getEmail())
                 .build();
 
