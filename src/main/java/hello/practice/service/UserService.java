@@ -6,10 +6,9 @@ import hello.practice.entity.User;
 import hello.practice.repository.BoardRepository;
 import hello.practice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * 회원(User)과 관련된 비즈니스 로직을 처리하는 서비스
@@ -22,6 +21,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * [회원가입]
@@ -32,6 +32,8 @@ public class UserService {
      */
     @Transactional // DB에 데이터를 저장해야 하므로 '쓰기 모드' 활성화
     public UserResponseDto signUp(UserRequestDto requestDto) {
+
+        String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
 
         // [Step 1] 중복 검증 (Validation)
         // DB에 이미 같은 이메일이 있는지 확인한다.
@@ -47,7 +49,7 @@ public class UserService {
         User user = User.builder()
                 .username(requestDto.getUsername())
                 .email(requestDto.getEmail())
-                .password(requestDto.getPassword())
+                .password(encodedPassword)
                 .build();
 
         // [Step 3] DB 저장
@@ -91,7 +93,7 @@ public class UserService {
      * 참고: 로그인 같은 단순 조회는 데이터를 변경하지 않으므로
      * 클래스 레벨의 @Transactional(readOnly = true)가 적용되어 성능에 유리하다.
      */
-    public UserResponseDto login(String email, String password) {
+    public UserResponseDto login(String email, String rawPassword) {
 
         // [Step 1] 이메일 조회
         // orElse(null): 유저를 못 찾으면 null을 반환하여 다음 단계에서 검증한다.
@@ -99,7 +101,7 @@ public class UserService {
 
         // [Step 2] 검증 (아이디 존재 여부 AND 비밀번호 일치 여부)
         // 아이디가 없거나(null), 비밀번호가 틀리면 예외를 터뜨린다.
-        if (user == null || !user.getPassword().equals(password)) {
+        if (user == null || !passwordEncoder.matches(rawPassword, user.getPassword())) {
             throw new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
